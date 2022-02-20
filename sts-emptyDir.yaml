@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sts-test
+spec:
+  serviceName: default
+  replicas: 1
+  selector:
+    matchLabels:
+      component: sts-test
+  volumeClaimTemplates:
+  - metadata:
+      name: sts-test
+      labels:
+        component: sts-test
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi
+  template:
+    metadata:
+      labels:
+        component: sts-test
+    spec:
+      volumes:
+      - name: empty-dir
+        emptyDir: {}
+      containers:
+      - name: file-generator
+        image: "alpine:latest"
+        command:
+        - sleep
+        - '24h'
+        volumeMounts:
+          - mountPath: /test
+            name: empty-dir

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: deploy-test
+  template:
+    metadata:
+      labels:
+        component: deploy-test
+    spec:
+      volumes:
+      - name: empty-dir
+        emptyDir: {}
+      containers:
+      - name: file-generator
+        image: "alpine:latest"
+        command:
+        - sleep
+        - '24h'
+        volumeMounts:
+          - mountPath: /test
+            name: empty-dir
